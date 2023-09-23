@@ -25,14 +25,25 @@ odoo.define("point_of_sale.CustomValidatePaymentScreen", function (require) {
                 console.log(api_resp.status);
 
                 if (api_resp.status == 'new') {
-                    console.log("true");
-                    line.crypto_payment_status = 'Invoice Paid';
-                    return true;
-                }
-                else{
-                console.log("something else");}
-
-            } catch (error) {
+                     console.log("true new");
+                     line.crypto_payment_status = 'Invoice Paid';
+                     line.set_payment_status('done');
+                     //this.validateOrder(true);
+                     return true;
+				}
+                                else if (api_resp.status == 'new') {
+	                                this.showPopup("ErrorPopup", {
+       		                                 title: this.env._t("Payment Request Pending"),
+               		                         body: this.env._t("Payment Pending, retry after customer confirms"),
+                       		        });
+                                }
+				else if (api_resp.status == 'Expired') {
+				        this.showPopup("ErrorPopup", {
+                                                 title: this.env._t("Payment Request Expired"),
+                                                 body: this.env._t("Payment Request expired, retry to send another send request"),
+                                        });
+				}}
+				catch (error) {
                  console.log(error);
                  return false;
              }
