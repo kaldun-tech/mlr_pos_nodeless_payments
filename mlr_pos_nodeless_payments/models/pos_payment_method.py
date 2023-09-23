@@ -88,20 +88,23 @@ class PosPaymentMethod(models.Model):
         if create_invoice_api.status_code != 201:
             return {"code": create_invoice_api.status_code}
         create_invoice_json = create_invoice_api.json()
+        qrcodes = create_invoice_json['data'].get('qrCodes')
         if self.nodeless_selected_crypto == 'lightning':
             inv_json = {
             "code": 0,
             "invoice_id": create_invoice_json['data'].get('id'),
             "invoice": create_invoice_json['data'].get('lightningInvoice'),
-            "cryptopay_payment_link": 'lightning:' + create_invoice_json['data'].get('lightningInvoice'),
+            "cryptopay_payment_link": 'lightning' + create_invoice_json['data'].get('lightningInvoice'),
+            "cryptopay_payment_link_serial": qrcodes.get('lightning'),
             "cryptopay_payment_type": 'BTC-'+ self.nodeless_selected_crypto,
             "crypto_amt": (create_invoice_json['data'].get('satsAmount')/100000000),}
         if self.nodeless_selected_crypto == 'onchain':
             inv_json = {
             "code": 0,
             "invoice_id": create_invoice_json['data'].get('id'),
-            "invoice": create_invoice_json['data'].get('lightningInvoice'),
-            "cryptopay_payment_link": 'BTC:' + create_invoice_json['data'].get('onchainAddress'),
+            "invoice": create_invoice_json['data'].get('onchainAddress'),
+            "cryptopay_payment_link": 'BTC' + create_invoice_json['data'].get('onchainAddress'),
+            "cryptopay_payment_link_serial": qrcodes.get('onchain'),
             "cryptopay_payment_type": 'BTC-'+ self.nodeless_selected_crypto,
             "crypto_amt": (create_invoice_json['data'].get('satsAmount')/100000000),}
         _logger.info(inv_json)
