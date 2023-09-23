@@ -14,9 +14,12 @@ let PaymentNodelessPayment = PaymentInterface.extend({
         this._super(...arguments);
     },
 
+
     send_payment_request: async function (cid) {
         let line = this.pos.get_order().selected_paymentline;
         let order_id = this.pos.get_order().uid;
+        console.log(line.payment_method.id);
+        console.log(line.payment_method.use_payment_terminal);
         await this._super.apply(this, arguments);
         let data = null;
         try {
@@ -34,11 +37,14 @@ let PaymentNodelessPayment = PaymentInterface.extend({
         if(data.code != '0')
             return false;
         const codeWriter = new window.ZXing.BrowserQRCodeSvgWriter();
+        console.log(data.cryptopay_payment_link_serial);
+        //let qr_code_svg = line.cryptopay_payment_link
         let qr_code_svg = new XMLSerializer().serializeToString(codeWriter.write(data.cryptopay_payment_link, 150, 150));
         line.is_crypto_payment = true;
         console.log(line.is_crypto_payment);
         line.cryptopay_payment_link = data.cryptopay_payment_link;
         line.cryptopay_payment_link_qr_code = "data:image/svg+xml;base64,"+ window.btoa(qr_code_svg);
+        console.log(line.cryptopay_payment_link_qr_code)
         line.cryptopay_invoice_id = data.invoice_id;
         line.invoiced_crypto_amount = data.crypto_amt;
         console.log(data.cryptopay_payment_type);
@@ -73,7 +79,7 @@ try {
                     silent: true,
                 });
 
-                if (api_resp.status == 'new') {
+                if (api_resp.status == 'paid') {
                     line.crypto_payment_status = 'Invoice Paid';
                     //line.cryptopay_payment_type = api_resp.pay_currency;
                     return true;
@@ -84,7 +90,7 @@ try {
                  return false;
              }
 
-	   await new Promise(r => setTimeout(r, 3000));
+	   await new Promise(r => setTimeout(r, 30000));
         }
 }
 catch (error) {
