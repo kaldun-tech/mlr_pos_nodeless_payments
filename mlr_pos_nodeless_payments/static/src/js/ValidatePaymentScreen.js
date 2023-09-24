@@ -11,7 +11,8 @@ odoo.define("point_of_sale.CustomValidatePaymentScreen", function (require) {
         }
         async validateOrder(isForceValidate) {
             for (let line of this.paymentLines) {
-            console.log("called validation")
+            console.log("called nodeless validation");
+            if(line.is_crypto_payment && line.payment_method.use_payment_terminal == 'nodeless') {
             try {
                 let order_id = this.env.pos.get_order().uid;
                 let api_resp = await rpc.query({
@@ -24,29 +25,37 @@ odoo.define("point_of_sale.CustomValidatePaymentScreen", function (require) {
                 console.log(api_resp);
                 console.log(api_resp.status);
 
-                if (api_resp.status == 'new') {
-                     console.log("true new");
+                if (api_resp.status == 'paid') {
+                     console.log("valid nodeless transaction");
                      line.crypto_payment_status = 'Invoice Paid';
                      line.set_payment_status('done');
-                     //this.validateOrder(true);
-                     return true;
 				}
                                 else if (api_resp.status == 'new') {
 	                                this.showPopup("ErrorPopup", {
        		                                 title: this.env._t("Payment Request Pending"),
                		                         body: this.env._t("Payment Pending, retry after customer confirms"),
                        		        });
+                       		        line.set_payment_status('cryptowaiting');
                                 }
-				else if (api_resp.status == 'Expired') {
+				else if (api_resp.status == 'expired') {
+				        console.log("expired nodeless transaction");
 				        this.showPopup("ErrorPopup", {
                                                  title: this.env._t("Payment Request Expired"),
                                                  body: this.env._t("Payment Request expired, retry to send another send request"),
+                                        });
+				        line.set_payment_status('retry');
+				}
+				else if (api_resp.status) {
+				        console.log("unknown nodeless transaction");
+				        this.showPopup("ErrorPopup", {
+                                                 title: this.env._t("Payment Request unknown"),
+                                                 body: this.env._t("Payment Request unknown, retry to send another send request"),
                                         });
 				}}
 				catch (error) {
                  console.log(error);
                  return false;
-             }
+             }}
             }
           super.validateOrder(isForceValidate);
         }

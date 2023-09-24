@@ -94,7 +94,7 @@ class PosPaymentMethod(models.Model):
             "code": 0,
             "invoice_id": create_invoice_json['data'].get('id'),
             "invoice": create_invoice_json['data'].get('lightningInvoice'),
-            "cryptopay_payment_link": 'lightning' + create_invoice_json['data'].get('lightningInvoice'),
+            "cryptopay_payment_link": 'lightning:' + create_invoice_json['data'].get('lightningInvoice'),
             "cryptopay_payment_link_serial": qrcodes.get('lightning'),
             "cryptopay_payment_type": 'BTC-'+ self.nodeless_selected_crypto,
             "crypto_amt": (create_invoice_json['data'].get('satsAmount')/100000000),}
@@ -103,7 +103,7 @@ class PosPaymentMethod(models.Model):
             "code": 0,
             "invoice_id": create_invoice_json['data'].get('id'),
             "invoice": create_invoice_json['data'].get('onchainAddress'),
-            "cryptopay_payment_link": 'BTC' + create_invoice_json['data'].get('onchainAddress'),
+            "cryptopay_payment_link": 'BTC:' + create_invoice_json['data'].get('onchainAddress'),
             "cryptopay_payment_link_serial": qrcodes.get('onchain'),
             "cryptopay_payment_type": 'BTC-'+ self.nodeless_selected_crypto,
             "crypto_amt": (create_invoice_json['data'].get('satsAmount')/100000000),}
