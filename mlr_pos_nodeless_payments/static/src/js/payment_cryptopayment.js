@@ -38,19 +38,24 @@ let PaymentNodelessPayment = PaymentInterface.extend({
             return false;
         const codeWriter = new window.ZXing.BrowserQRCodeSvgWriter();
         console.log(data.cryptopay_payment_link_serial);
+<<<<<<< HEAD:mlr_pos_nodeless_payments/static/src/js/payment_cryptopayment.js
+        //let qr_code_svg = line.cryptopay_payment_link;
+=======
         //let qr_code_svg = line.cryptopay_payment_link
+>>>>>>> main:static/src/js/payment_cryptopayment.js
         let qr_code_svg = new XMLSerializer().serializeToString(codeWriter.write(data.cryptopay_payment_link, 150, 150));
         line.is_crypto_payment = true;
-        console.log(line.is_crypto_payment);
         line.cryptopay_payment_link = data.cryptopay_payment_link;
         line.cryptopay_payment_link_qr_code = "data:image/svg+xml;base64,"+ window.btoa(qr_code_svg);
         console.log(line.cryptopay_payment_link_qr_code)
         line.cryptopay_invoice_id = data.invoice_id;
         line.invoiced_crypto_amount = data.crypto_amt;
-        console.log(data.cryptopay_payment_type);
         line.cryptopay_payment_type = data.cryptopay_payment_type;
-        console.log(line.cryptopay_payment_type);
         line.conversion_rate = line.amount/line.invoiced_crypto_amount;
+        console.log(line.is_crypto_payment);
+        console.log(line.cryptopay_payment_link_qr_code);
+        console.log(data.cryptopay_payment_type);
+        console.log(line.cryptopay_payment_type);
         console.log(line.invoiced_crypto_amount);
         console.log(line.conversion_rate);
         line.set_payment_status('cryptowaiting');
@@ -68,6 +73,7 @@ let PaymentNodelessPayment = PaymentInterface.extend({
 try {
         let order_id = this.pos.get_order().uid;
         console.log(order_id);
+        console.log(line.payment_method.id);
         for (let i = 0; i < 100; i++) {
             line.crypto_payment_status = 'Checking Invoice status '+(i+1)+'/100';
             try {
@@ -80,17 +86,32 @@ try {
                 });
 
                 if (api_resp.status == 'paid') {
+<<<<<<< HEAD:mlr_pos_nodeless_payments/static/src/js/payment_cryptopayment.js
+                    console.log("valid nodeless transaction - timer");
+=======
+>>>>>>> main:static/src/js/payment_cryptopayment.js
                     line.crypto_payment_status = 'Invoice Paid';
                     //line.cryptopay_payment_type = api_resp.pay_currency;
                     return true;
                 }
+                else if (api_resp.status == 'expired') {
+                    console.log("invalid expired nodeless transaction - timer");
+                    line.crypto_payment_status = 'Invoice Expired';
+                    //line.cryptopay_payment_type = api_resp.pay_currency;
+                    return false;
+                }
+
 
             } catch (error) {
                  console.log(error);
                  return false;
              }
 
+<<<<<<< HEAD:mlr_pos_nodeless_payments/static/src/js/payment_cryptopayment.js
+	   await new Promise(r => setTimeout(r, 90000));
+=======
 	   await new Promise(r => setTimeout(r, 30000));
+>>>>>>> main:static/src/js/payment_cryptopayment.js
         }
 }
 catch (error) {
