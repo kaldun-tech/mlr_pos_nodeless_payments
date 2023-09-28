@@ -38,11 +38,16 @@ let PaymentNodelessPayment = PaymentInterface.extend({
             return false;
         const codeWriter = new window.ZXing.BrowserQRCodeSvgWriter();
         console.log(data.cryptopay_payment_link_serial);
+<<<<<<< HEAD:mlr_pos_nodeless_payments/static/src/js/payment_cryptopayment.js
         //let qr_code_svg = line.cryptopay_payment_link;
+=======
+        //let qr_code_svg = line.cryptopay_payment_link
+>>>>>>> main:static/src/js/payment_cryptopayment.js
         let qr_code_svg = new XMLSerializer().serializeToString(codeWriter.write(data.cryptopay_payment_link, 150, 150));
         line.is_crypto_payment = true;
         line.cryptopay_payment_link = data.cryptopay_payment_link;
         line.cryptopay_payment_link_qr_code = "data:image/svg+xml;base64,"+ window.btoa(qr_code_svg);
+        console.log(line.cryptopay_payment_link_qr_code)
         line.cryptopay_invoice_id = data.invoice_id;
         line.invoiced_crypto_amount = data.crypto_amt;
         line.cryptopay_payment_type = data.cryptopay_payment_type;
@@ -81,7 +86,10 @@ try {
                 });
 
                 if (api_resp.status == 'paid') {
+<<<<<<< HEAD:mlr_pos_nodeless_payments/static/src/js/payment_cryptopayment.js
                     console.log("valid nodeless transaction - timer");
+=======
+>>>>>>> main:static/src/js/payment_cryptopayment.js
                     line.crypto_payment_status = 'Invoice Paid';
                     //line.cryptopay_payment_type = api_resp.pay_currency;
                     return true;
@@ -99,7 +107,11 @@ try {
                  return false;
              }
 
+<<<<<<< HEAD:mlr_pos_nodeless_payments/static/src/js/payment_cryptopayment.js
 	   await new Promise(r => setTimeout(r, 90000));
+=======
+	   await new Promise(r => setTimeout(r, 30000));
+>>>>>>> main:static/src/js/payment_cryptopayment.js
         }
 }
 catch (error) {
