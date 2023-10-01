@@ -34,14 +34,16 @@ Setup
 
 Operation
 1. From the Point of Sale Dashboard open a New Session.
-2. After creating an order click Create Invoice to generate Lightning Invoice. The generated invoice ID from BTCpay server will appear on a popup, acknowledge by clicking Ok.
-   ![image](https://github.com/ERP-FTW/mlr_pos_community/assets/124227412/a32262b0-6f72-49bd-bfc4-922983516567)
-4. To view the invoice QR code click Bill. The QR code can be presented to the customer on the screen or with a printed receipt.
-   ![image](https://github.com/ERP-FTW/mlr_pos_community/assets/124227412/e7030bfb-83f3-4b73-96b1-f2bab5a2d4e0)
-6. From the order navigate to the Payment screen. If the the customer paid with Lightning click Validate to confirm and close the order, if the invoice is unpaid a message will alert the user and an alternative payment method can be used. If the customer wishes to use another payment method, exe out the BTCpay server payment line and use the other payment method.
-   ![image](https://github.com/ERP-FTW/mlr_pos_community/assets/124227412/f81ed8f2-2186-4ef8-a023-55b3c336a142)
-   ![image](https://github.com/ERP-FTW/mlr_pos_community/assets/124227412/cfc6dc9f-a824-4ceb-9828-247a97b17ce6)
-   ![image](https://github.com/ERP-FTW/mlr_pos_community/assets/124227412/ade11951-04ca-477c-b5df-aed39ce8350d)
+2. After creating an order navigate to the payment screen and select the created Payment Method. On the Payment Line click Send to generate the payment information.
+   ![image](https://github.com/ERP-FTW/mlr_pos_nodeless_payments/assets/124227412/0184554f-b9af-4334-b11f-add516236a82)
+4. The Payment Line will display the Checking Invoice Status count and have a button Show receipt to view the invoice QR code on the bill receipt. 
+![image](https://github.com/ERP-FTW/mlr_pos_nodeless_payments/assets/124227412/58de2de6-75c8-43c4-9005-a3d72752b4c0)
+6. The QR code can be presented to the customer on the screen or with a printed receipt. Click Ok to navigate back to the Payment Screen.
+![image](https://github.com/ERP-FTW/mlr_pos_nodeless_payments/assets/124227412/6b48aa92-b8b4-49c4-8e1a-7493da17418d)
+7. If the customer paid with Lightning click Validate to confirm and close the order, if the invoice is unpaid a message will alert the user and an alternative payment method can be used. If the customer wishes to use another payment method, exe out the payment line and use the other payment method.
+![image](https://github.com/ERP-FTW/mlr_pos_nodeless_payments/assets/124227412/05ca17aa-19fa-4161-a968-38a8e17be661)
+![image](https://github.com/ERP-FTW/mlr_pos_nodeless_payments/assets/124227412/bedceef5-ec32-475a-b2e0-9289d527ee17)
+
 8. Lightning payment information, satoshi amount and conversion rate, will be stored on the payment model. To view after closing the session navigate to Orders-> Payments and open a specific record.
-![image](https://github.com/ERP-FTW/mlr_pos_community/assets/124227412/90fef5a4-d74d-48c1-9a09-9f6e8d266fa1)
+![image](https://github.com/ERP-FTW/mlr_pos_nodeless_payments/assets/124227412/495d061a-6f71-4a3f-a83d-4fec7384f336)
 
