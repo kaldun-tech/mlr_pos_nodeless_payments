@@ -1,9 +1,9 @@
 # mlr_pos_nodeless_payments
 
-Lightning Rod Point of Sale Community Edition Readme
+Lightning Rod Point of Sale Nodeless extension module Readme
 
 Overview
-<br>This custom module for Odoo 16+ to add Nodeless.io as a payment method to the Point-of-Sale application. Nodeless.io acts as payment gateway/provider for Bitcoin on-chain and lightning transactions, and is queried by API calls from Odoo. Nodeless is added as a new electronic payment method to the POS and Nodeless account access is provided by API to Odoo. The payment method can be set to provide a web URL for the customer to pay on a nodeless.io portal site or lightning/on-chain invoice so they pay directly from their wallet. A created invoice for an order is printed on the bill receipt for scanning by customers on paper or the screen. A customer can choose to pay in Lightning or a traditional payment method. The POS Validate payment button will check the status of the invoice and mark the order as paid if the invoice is settled. The method will also check the status of the payment every minute and validate the payment if made. Conversion rate and invoiced satoshis are stored for each order.
+<br>This custom module for Odoo 16+ to add Nodeless.io as a payment method to the Point-of-Sale application. Nodeless.io acts as a payment gateway/provider for Bitcoin on-chain and lightning transactions, and is queried by API calls from Odoo. Nodeless is added as a new electronic payment method to the POS and Nodeless account access is provided by API to Odoo. The payment method can be set to provide a web URL for the customer to pay on a nodeless.io portal site or lightning/on-chain invoice so they pay directly from their wallet. A created invoice for an order is printed on the bill receipt for scanning by customers on paper or the screen. A customer can choose to pay in Lightning or a traditional payment method. The POS Validate payment button will check the status of the invoice and mark the order as paid if the invoice is settled. The method will also check the status of the payment every minute and validate the payment if made. Conversion rate and invoiced satoshis are stored for each order.
 
 Prerequisites (versions)
 <br>Compatible with Odoo 16
