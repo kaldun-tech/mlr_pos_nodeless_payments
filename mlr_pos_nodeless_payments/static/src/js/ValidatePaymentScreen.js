@@ -25,7 +25,7 @@ odoo.define("point_of_sale.CustomValidatePaymentScreen", function (require) {
                 console.log(api_resp);
                 console.log(api_resp.status);
 
-                if (api_resp.status == 'paid') {
+                if (api_resp.status == 'paid' || api_resp.status == 'overpaid') {
                      console.log("valid nodeless transaction");
                      line.crypto_payment_status = 'Invoice Paid';
                      line.set_payment_status('done');
@@ -33,23 +33,39 @@ odoo.define("point_of_sale.CustomValidatePaymentScreen", function (require) {
                                 else if (api_resp.status == 'new') {
 	                                this.showPopup("ErrorPopup", {
        		                                 title: this.env._t("Payment Request Pending"),
-               		                         body: this.env._t("Payment Pending, retry after customer confirms"),
+               		                         body: this.env._t("Payment Pending, retry after customer confirms. Status: " + api_resp.status),
                        		        });
                        		        line.set_payment_status('cryptowaiting');
                                 }
-				else if (api_resp.status == 'expired') {
+				else if (api_resp.status == 'expired' || api_resp.status == 'cancelled') {
 				        console.log("expired nodeless transaction");
 				        this.showPopup("ErrorPopup", {
-                                                 title: this.env._t("Payment Request Expired"),
-                                                 body: this.env._t("Payment Request expired, retry to send another send request"),
+                                                 title: this.env._t("Payment Request Failed"),
+                                                 body: this.env._t("Payment Request failed, retry to send another send request. Status: " + api_resp.status),
                                         });
 				        line.set_payment_status('retry');
 				}
+
+                else if (api_resp.status == 'underpaid') {
+                       this.showPopup("ErrorPopup", {
+                            title: this.env._t("Payment Request Dispute"),
+                            body: this.env._t("Payment Pending, underpaid payment. Have manager confirm with customer. Status: " + api_resp.status),
+                                  });
+                                 }
+
+
+				else if (api_resp.status == 'pending_confirmation' || api_resp.status == 'in_flight' || api_resp.status == 'sending') {
+	                                this.showPopup("ErrorPopup", {
+       		                                 title: this.env._t("Payment Request Pending"),
+               		                         body: this.env._t("Payment Pending, funds are being transferred and will be valid once confirmed. Status: " + api_resp.status),
+                       		        });
+                                }
+
 				else if (api_resp.status) {
 				        console.log("unknown nodeless transaction");
 				        this.showPopup("ErrorPopup", {
                                                  title: this.env._t("Payment Request unknown"),
-                                                 body: this.env._t("Payment Request unknown, retry to send another send request"),
+                                                 body: this.env._t("Payment Request unknown, retry to send another send request. Status: " + api_resp.status),
                                         });
 				}}
 				catch (error) {

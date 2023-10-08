@@ -71,9 +71,10 @@ class PosPaymentMethod(models.Model):
                 "crypto_amt": create_invoice_json['data'].get('satsAmount'),}
             _logger.info(f"Completed Nodeless nodeless_create_crypto_invoice_payment_link. Passing back {inv_json}")
             return inv_json
-        except:
-            _logger.info("An exception occurred with Nodeless nodeless_create_crypto_invoice_payment_link")
-            return {"code":"An exception occurred with Nodeless nodeless_create_crypto_invoice_payment_link"}
+        except Exception as e:
+            message = "An exception occurred with Nodeless nodeless_create_crypto_invoice_payment_link: " + str(e)
+            _logger.info(message)
+            return {"code": message}
 
     def nodeless_create_crypto_invoice_direct_invoice(self, args):
         try:
@@ -105,9 +106,10 @@ class PosPaymentMethod(models.Model):
                 "crypto_amt": create_invoice_json['data'].get('satsAmount'), }
             _logger.info(f"Completed Nodeless nodeless_create_crypto_invoice_direct_invoice. Passing back {inv_json}")
             return inv_json
-        except:
-            _logger.info("An exception occurred with Nodeless nodeless_create_crypto_invoice_direct_invoice")
-            return {"code":"An exception occurred with Nodeless nodeless_create_crypto_invoice_direct_invoice"}
+        except Exception as e:
+            message = "An exception occurred with Nodeless nodeless_create_crypto_invoice_direct_invoice: " + str(e)
+            _logger.info(message)
+            return {"code": message}
 
     @api.model
     def nodeless_create_crypto_invoice(self, args):
@@ -128,9 +130,10 @@ class PosPaymentMethod(models.Model):
             else:
                 create_invoice_api = cryptopay_pm.nodeless_create_crypto_invoice_payment_link(args)
                 return create_invoice_api
-        except:
-            _logger.info("An exception occurred with Nodeless create_crypto_invoice")
-            return {"code":"An exception occurred with Nodeless create_crypto_invoice"}
+        except Exception as e:
+            message = "An exception occurred with Nodeless nodeless_create_crypto_invoice: " + str(e)
+            _logger.info(message)
+            return {"code": message}
 
     def nodeless_check_payment_status_payment_link(self, args):
         try:
@@ -144,9 +147,10 @@ class PosPaymentMethod(models.Model):
                 invoice_status_api = {'status': 'inaccessible'}
             _logger.info(f"Completed Nodeless nodeless_check_payment_status. Passing back {invoice_status_api.json()}")
             return invoice_status_api.json()
-        except:
-            _logger.info("An exception occurred with Nodeless nodeless_check_payment_status_payment_link")
-            return {"code":"An exception occurred with Nodeless nodeless_check_payment_status_payment_link"}
+        except Exception as e:
+            message = "An exception occurred with Nodeless nodeless_check_payment_status_payment_link: " + str(e)
+            _logger.info(message)
+            return {"status": message}
 
     def nodeless_check_payment_status_direct_invoice(self, args):
         try:
@@ -160,9 +164,10 @@ class PosPaymentMethod(models.Model):
                 return false
             _logger.info(f"Completed Nodeless nodeless_check_payment_status_direct_invoice. Passing back {invoice_status_api.json()}")
             return invoice_status_api.json()
-        except:
-            _logger.info("An exception occurred with Nodeless nodeless_check_payment_status_direct_invoice")
-            return {"code": "An exception occurred with Nodeless nodeless_check_payment_status_direct_invoice"}
+        except Exception as e:
+            message = "An exception occurred with Nodeless nodeless_check_payment_status_direct_invoice: " + str(e)
+            _logger.info(message)
+            return {"status": message}
 
     @api.model 
     def nodeless_check_payment_status(self, args):
@@ -177,7 +182,8 @@ class PosPaymentMethod(models.Model):
             else:
                 check_payment_api = cryptopay_pm.nodeless_check_payment_status_payment_link(args)
                 return check_payment_api
-        except:
-            _logger.info("An exception occurred with Nodeless nodeless_check_payment_status")
-            return {"code": "An exception occurred with Nodeless nodeless_check_payment_status"}
+        except Exception as e:
+            message = "An exception occurred with Nodeless nodeless_check_payment_status: " + str(e)
+            _logger.info(message)
+            return {"status": message}
 
