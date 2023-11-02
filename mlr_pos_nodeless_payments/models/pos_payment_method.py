@@ -9,6 +9,7 @@ import hashlib
 import hmac
 import base64
 from datetime import datetime, timezone
+from requests import Response
 
 from odoo import fields, models, api, _
 from odoo.exceptions import ValidationError, UserError, AccessError
@@ -28,7 +29,11 @@ class PosPaymentMethod(models.Model):
     nodeless_payment_flow = fields.Selection([('payment link','Payment Link'),('direct invoice','Direct Invoice')], string='Nodeless Payment Flow')
     nodeless_selected_crypto = fields.Selection([('lightning','BTC-Lightning'),('onchain','BTC-onchain')], string='Nodeless Selected Cryptocurrency')
     nodeless_store_id = fields.Char(string='Nodeless Store ID')
-    def call_nodeless_api(self,payload,api,method,jwt=0):
+
+    def call_nodeless_api(self, payload, api, method, jwt=0) -> Response:
+        """Calls nodeless API
+        Returns: Response from API request
+        Raises: UserError"""
         try:
             _logger.info(f"Called Nddeless call_nodeless_api. Passed args are {payload}")
             request_url = f"{self.server_url}{api}"
@@ -45,13 +50,16 @@ class PosPaymentMethod(models.Model):
             raise UserError(_("API call failure: %s", e.args))
 
     def _test_connection(self):
+        """Tests nodeless check connection"""
         _logger.info("called nodeless check connection")
         if self.use_payment_terminal == 'nodeless':
             return self.call_nodeless_api({},"/api/v1/status","GET")
         else:
             return super()._test_connection()
 
-    def nodeless_create_crypto_invoice_payment_link(self, args):
+    def nodeless_create_crypto_invoice_payment_link(self, args) -> dict:
+        """Creates nodeless crypto invoice payment link
+        Returns: JSON with invoice or code on failure"""
         try:
             _logger.info(f"Called Nodeless nodeless_create_crypto_invoice_payment_link. Passed args are {args}")
             payload = {
@@ -76,7 +84,9 @@ class PosPaymentMethod(models.Model):
             _logger.info(message)
             return {"code": message}
 
-    def nodeless_create_crypto_invoice_direct_invoice(self, args):
+    def nodeless_create_crypto_invoice_direct_invoice(self, args) -> dict:
+        """Creates nodeless crypto direct invoice
+        Returns: JSON with invoice or code on error"""
         try:
             _logger.info(f"Called Nodeless nodeless_create_crypto_invoice_direct_invoice. Passed args are {args}")
             payload = {
@@ -112,7 +122,9 @@ class PosPaymentMethod(models.Model):
             return {"code": message}
 
     @api.model
-    def nodeless_create_crypto_invoice(self, args):
+    def nodeless_create_crypto_invoice(self, args) -> dict:
+        """Creates nodeless crypto invoice
+        Returns: JSON of invoice or code on failure"""
         try:
             _logger.info(f"Called Nodeless nodeless_create_crypto_invoice. Passed args are {args}")
             cryptopay_pm = self.env['pos.payment.method'].search([('id', '=', args['pm_id'])], limit=1)
@@ -124,18 +136,22 @@ class PosPaymentMethod(models.Model):
                 return {"code": "Above maximum amount of method: " + str(self.env.ref('base.main_company').currency_id.symbol) + str(cryptopay_pm.crypto_maximum_amount)}
             nodeless_payment_flow = cryptopay_pm['nodeless_payment_flow']
             if nodeless_payment_flow == 'direct invoice':
+                # TODO why?
                 nodeless_selected_crypto = cryptopay_pm['nodeless_selected_crypto']
                 create_invoice_api = cryptopay_pm.nodeless_create_crypto_invoice_direct_invoice(args)
                 return create_invoice_api
             else:
                 create_invoice_api = cryptopay_pm.nodeless_create_crypto_invoice_payment_link(args)
                 return create_invoice_api
+        # TODO Catch specific exception
         except Exception as e:
             message = "An exception occurred with Nodeless nodeless_create_crypto_invoice: " + str(e)
             _logger.info(message)
             return {"code": message}
 
-    def nodeless_check_payment_status_payment_link(self, args):
+    def nodeless_check_payment_status_payment_link(self, args) -> dict:
+        """Nodeless check payment status link
+        Returns: JSON of payment status or code on failure"""
         try:
             _logger.info(f"Called Nodeless nodeless_check_payment_status_payment_link. Passed args are {args}")
             cryptopay_pm = self.env['pos.payment.method'].search([('id', '=', args['pm_id'])], limit=1)
@@ -147,12 +163,15 @@ class PosPaymentMethod(models.Model):
                 invoice_status_api = {'status': 'inaccessible'}
             _logger.info(f"Completed Nodeless nodeless_check_payment_status. Passing back {invoice_status_api.json()}")
             return invoice_status_api.json()
+        # TODO Catch specific exception
         except Exception as e:
             message = "An exception occurred with Nodeless nodeless_check_payment_status_payment_link: " + str(e)
             _logger.info(message)
             return {"status": message}
 
     def nodeless_check_payment_status_direct_invoice(self, args):
+        """Nodeless check payment status of direct invoice
+        Returns: JSON of payment status or code on failure"""
         try:
             _logger.info(f"Called Nodeless nodeless_check_payment_status_direct_invoice. Passed args are {args}")
             cryptopay_pm = self.env['pos.payment.method'].search([('id', '=', args['pm_id'])], limit=1)
@@ -161,9 +180,10 @@ class PosPaymentMethod(models.Model):
             server_url = "/api/v1/store/" + self.nodeless_store_id + "/invoice/" + args['invoice_id'] + "/status"
             invoice_status_api = cryptopay_pm.call_nodeless_api({}, server_url, 'GET')
             if invoice_status_api.status_code != 200:
-                return false
+                return {"code": invoice_status_api.status_code}
             _logger.info(f"Completed Nodeless nodeless_check_payment_status_direct_invoice. Passing back {invoice_status_api.json()}")
             return invoice_status_api.json()
+        # TODO Catch specific exception
         except Exception as e:
             message = "An exception occurred with Nodeless nodeless_check_payment_status_direct_invoice: " + str(e)
             _logger.info(message)
@@ -171,6 +191,8 @@ class PosPaymentMethod(models.Model):
 
     @api.model 
     def nodeless_check_payment_status(self, args):
+        """Nodeless check payment status
+        Returns: JSON of payment status or code on failure"""
         try:
             _logger.info(f"Called Nodeless nodeless_check_payment_status. Passed args are {args}")
             cryptopay_pm = self.env['pos.payment.method'].search([('id', '=', args['pm_id'])], limit=1)
@@ -182,6 +204,7 @@ class PosPaymentMethod(models.Model):
             else:
                 check_payment_api = cryptopay_pm.nodeless_check_payment_status_payment_link(args)
                 return check_payment_api
+        # TODO Catch specific exception
         except Exception as e:
             message = "An exception occurred with Nodeless nodeless_check_payment_status: " + str(e)
             _logger.info(message)
