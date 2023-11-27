@@ -45,6 +45,7 @@ class PosPaymentMethod(models.Model):
                 apiRes = requests.post(request_url, data=json.dumps(payload), headers=headers)
             _logger.info(f"Completed Nodeless call_nodeless_api, status {apiRes.status_code}. Passing back {apiRes.json()}")
             return apiRes
+        # TODO Catching all exceptions is generally a bad idea. What sort of exception is expected?
         except Exception as e:
             _logger.info("API call failure: %s", e.args)
             raise UserError(_("API call failure: %s", e.args))
@@ -136,7 +137,7 @@ class PosPaymentMethod(models.Model):
                 return {"code": "Above maximum amount of method: " + str(self.env.ref('base.main_company').currency_id.symbol) + str(cryptopay_pm.crypto_maximum_amount)}
             nodeless_payment_flow = cryptopay_pm['nodeless_payment_flow']
             if nodeless_payment_flow == 'direct invoice':
-                # TODO why?
+                # TODO Unused variable
                 nodeless_selected_crypto = cryptopay_pm['nodeless_selected_crypto']
                 create_invoice_api = cryptopay_pm.nodeless_create_crypto_invoice_direct_invoice(args)
                 return create_invoice_api
